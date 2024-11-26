@@ -3,10 +3,10 @@ package ubb.scs.map.domain;
 import java.time.LocalDateTime;
 
 public class PrietenieDto extends Entity<Long> {
-    private String utilizatorFirstName;
-    private String utilizatorLastName;
-    private LocalDateTime friendsFrom;
-    private Boolean accepted;
+    private final String utilizatorFirstName;
+    private final String utilizatorLastName;
+    private final LocalDateTime friendsFrom;
+    private final Boolean accepted;
 
     public PrietenieDto(Long id, String utilizatorFirstName, String utilizatorLastName, LocalDateTime friendsFrom, Boolean accepted) {
         setId(id);

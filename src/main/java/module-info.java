@@ -15,4 +15,7 @@ module ubb.scs.map {
     exports ubb.scs.map.domain;
     exports ubb.scs.map.controller;
     exports ubb.scs.map.service;
+    exports ubb.scs.map.repository;
+    exports ubb.scs.map.utils.observer;
+    exports ubb.scs.map.utils.events;
 }

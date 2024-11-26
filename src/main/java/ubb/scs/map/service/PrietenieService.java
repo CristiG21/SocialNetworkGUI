@@ -17,7 +17,7 @@ public class PrietenieService implements Observable<PrietenieEntityChangeEvent> 
     private static PrietenieService instance = null;
     private final Repository<Long, Utilizator> repoUtilizator;
     private final Repository<Long, Prietenie> repoPrietenie;
-    private List<Observer<PrietenieEntityChangeEvent>> observers = new ArrayList<>();
+    private final List<Observer<PrietenieEntityChangeEvent>> observers = new ArrayList<>();
 
     private PrietenieService(Repository<Long, Utilizator> repoUtilizator, Repository<Long, Prietenie> repoPrietenie) {
         this.repoUtilizator = repoUtilizator;
@@ -49,10 +49,6 @@ public class PrietenieService implements Observable<PrietenieEntityChangeEvent> 
     public void removePrietenie(Long id) {
         repoPrietenie.delete(id);
         notifyObservers(new PrietenieEntityChangeEvent(ChangeEventType.DELETE, null));
-    }
-
-    public Iterable<Prietenie> getAllPrietenii() {
-        return repoPrietenie.findAll();
     }
 
     public Iterable<PrietenieDto> getAllReceivedPrietenii(Long id) {
@@ -112,6 +108,6 @@ public class PrietenieService implements Observable<PrietenieEntityChangeEvent> 
 
     @Override
     public void notifyObservers(PrietenieEntityChangeEvent t) {
-        observers.stream().forEach(x -> x.update(t));
+        observers.forEach(x -> x.update(t));
     }
 }

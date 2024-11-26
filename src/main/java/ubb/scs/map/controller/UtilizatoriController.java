@@ -29,7 +29,7 @@ import java.util.stream.StreamSupport;
 public class UtilizatoriController implements Observer<UtilizatorEntityChangeEvent> {
     private UtilizatorService utilizatorService;
     private PrietenieService prietenieService;
-    private ObservableList<Utilizator> model = FXCollections.observableArrayList();
+    private final ObservableList<Utilizator> model = FXCollections.observableArrayList();
 
     @FXML
     private TableView<Utilizator> tableView;
@@ -48,8 +48,8 @@ public class UtilizatoriController implements Observer<UtilizatorEntityChangeEve
 
     @FXML
     public void initialize() {
-        tableColumnFirstName.setCellValueFactory(new PropertyValueFactory<Utilizator, String>("firstName"));
-        tableColumnLastName.setCellValueFactory(new PropertyValueFactory<Utilizator, String>("lastName"));
+        tableColumnFirstName.setCellValueFactory(new PropertyValueFactory<>("firstName"));
+        tableColumnLastName.setCellValueFactory(new PropertyValueFactory<>("lastName"));
         tableView.setItems(model);
     }
 
@@ -72,7 +72,7 @@ public class UtilizatoriController implements Observer<UtilizatorEntityChangeEve
 
     @FXML
     public void handleDeleteUtilizator(ActionEvent actionEvent) {
-        Utilizator utilizator = (Utilizator) tableView.getSelectionModel().getSelectedItem();
+        Utilizator utilizator = tableView.getSelectionModel().getSelectedItem();
         if (utilizator != null) {
             try {
                 utilizatorService.removeUtilizator(utilizator.getId());
@@ -87,7 +87,7 @@ public class UtilizatoriController implements Observer<UtilizatorEntityChangeEve
 
     @FXML
     public void handleUpdateUtilizator(ActionEvent actionEvent) {
-        Utilizator utilizator = (Utilizator) tableView.getSelectionModel().getSelectedItem();
+        Utilizator utilizator = tableView.getSelectionModel().getSelectedItem();
         if (utilizator != null)
             showEditUtilizatorDialog(utilizator);
         else
@@ -96,7 +96,7 @@ public class UtilizatoriController implements Observer<UtilizatorEntityChangeEve
 
     @FXML
     public void handleOpenPrietenii(ActionEvent actionEvent) {
-        Utilizator utilizator = (Utilizator) tableView.getSelectionModel().getSelectedItem();
+        Utilizator utilizator = tableView.getSelectionModel().getSelectedItem();
         if (utilizator == null) {
             MessageAlert.showErrorMessage(null, "Nu este selectat niciun utilizator!");
             return;

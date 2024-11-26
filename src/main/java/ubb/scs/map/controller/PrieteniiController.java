@@ -24,15 +24,14 @@ import ubb.scs.map.utils.observer.Observer;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 public class PrieteniiController implements Observer<PrietenieEntityChangeEvent> {
     Long userId;
     private UtilizatorService utilizatorService;
     private PrietenieService prietenieService;
-    private ObservableList<PrietenieDto> modelReceived = FXCollections.observableArrayList();
-    private ObservableList<PrietenieDto> modelSent = FXCollections.observableArrayList();
+    private final ObservableList<PrietenieDto> modelReceived = FXCollections.observableArrayList();
+    private final ObservableList<PrietenieDto> modelSent = FXCollections.observableArrayList();
 
     @FXML
     private TableView<PrietenieDto> tableViewReceived;
@@ -109,13 +108,13 @@ public class PrieteniiController implements Observer<PrietenieEntityChangeEvent>
 
     @FXML
     public void handleDeleteReceivedPrietenie(ActionEvent actionEvent) {
-        PrietenieDto prietenie = (PrietenieDto) tableViewReceived.getSelectionModel().getSelectedItem();
+        PrietenieDto prietenie = tableViewReceived.getSelectionModel().getSelectedItem();
         handleDeletePrietenie(prietenie);
     }
 
     @FXML
     public void handleDeleteSentPrietenie(ActionEvent actionEvent) {
-        PrietenieDto prietenie = (PrietenieDto) tableViewSent.getSelectionModel().getSelectedItem();
+        PrietenieDto prietenie = tableViewSent.getSelectionModel().getSelectedItem();
         handleDeletePrietenie(prietenie);
     }
 
@@ -134,7 +133,7 @@ public class PrieteniiController implements Observer<PrietenieEntityChangeEvent>
 
     @FXML
     public void handleAcceptPrietenie(ActionEvent actionEvent) {
-        PrietenieDto prietenie = (PrietenieDto) tableViewReceived.getSelectionModel().getSelectedItem();
+        PrietenieDto prietenie = tableViewReceived.getSelectionModel().getSelectedItem();
         if (prietenie == null) {
             MessageAlert.showErrorMessage(null, "Nu este selectata nicio prietenie!");
             return;

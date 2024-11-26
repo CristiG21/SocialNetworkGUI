@@ -23,7 +23,7 @@ public class AddPrietenieController implements Observer<UtilizatorEntityChangeEv
     private Long userId;
     private UtilizatorService utilizatorService;
     private PrietenieService prietenieService;
-    private ObservableList<Utilizator> model = FXCollections.observableArrayList();
+    private final ObservableList<Utilizator> model = FXCollections.observableArrayList();
 
     @FXML
     private TableView<Utilizator> tableView;
@@ -42,8 +42,8 @@ public class AddPrietenieController implements Observer<UtilizatorEntityChangeEv
 
     @FXML
     private void initialize() {
-        tableColumnFirstName.setCellValueFactory(new PropertyValueFactory<Utilizator, String>("firstName"));
-        tableColumnLastName.setCellValueFactory(new PropertyValueFactory<Utilizator, String>("lastName"));
+        tableColumnFirstName.setCellValueFactory(new PropertyValueFactory<>("firstName"));
+        tableColumnLastName.setCellValueFactory(new PropertyValueFactory<>("lastName"));
         tableView.setItems(model);
     }
 
@@ -61,7 +61,7 @@ public class AddPrietenieController implements Observer<UtilizatorEntityChangeEv
 
     @FXML
     public void handleAddPrietenie(ActionEvent actionEvent) {
-        Utilizator utilizator = (Utilizator) tableView.getSelectionModel().getSelectedItem();
+        Utilizator utilizator = tableView.getSelectionModel().getSelectedItem();
         if (utilizator != null) {
             try {
                 prietenieService.addPrietenie(userId, utilizator.getId());
