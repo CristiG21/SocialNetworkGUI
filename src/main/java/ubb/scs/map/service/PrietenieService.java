@@ -4,16 +4,33 @@ import ubb.scs.map.domain.Prietenie;
 import ubb.scs.map.domain.PrietenieDto;
 import ubb.scs.map.domain.Utilizator;
 import ubb.scs.map.exceptions.ServiceException;
+import ubb.scs.map.repository.Repository;
 import ubb.scs.map.utils.events.ChangeEventType;
-import ubb.scs.map.utils.events.UtilizatorEntityChangeEvent;
+import ubb.scs.map.utils.events.PrietenieEntityChangeEvent;
+import ubb.scs.map.utils.observer.Observable;
+import ubb.scs.map.utils.observer.Observer;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
-public class PrietenieService {
+public class PrietenieService implements Observable<PrietenieEntityChangeEvent> {
+    private static PrietenieService instance = null;
+    private final Repository<Long, Utilizator> repoUtilizator;
+    private final Repository<Long, Prietenie> repoPrietenie;
+    private List<Observer<PrietenieEntityChangeEvent>> observers = new ArrayList<>();
+
+    private PrietenieService(Repository<Long, Utilizator> repoUtilizator, Repository<Long, Prietenie> repoPrietenie) {
+        this.repoUtilizator = repoUtilizator;
+        this.repoPrietenie = repoPrietenie;
+    }
+
+    public static PrietenieService getInstance(Repository<Long, Utilizator> repoUtilizator, Repository<Long, Prietenie> repoPrietenie) {
+        if (instance == null) {
+            instance = new PrietenieService(repoUtilizator, repoPrietenie);
+        }
+        return instance;
+    }
+
     public void addPrietenie(Long user1Id, Long user2Id) {
         if (repoUtilizator.findOne(user1Id).isEmpty() || repoUtilizator.findOne(user2Id).isEmpty()) {
             throw new ServiceException("A aparut o eroare la adaugarea prieteniei!");
@@ -26,12 +43,12 @@ public class PrietenieService {
         prietenie.setId(repoPrietenie.giveNewId());
         if (repoPrietenie.save(prietenie).isPresent())
             throw new ServiceException("Aceasta prietenie exista deja!");
-        notifyObservers(new UtilizatorEntityChangeEvent(ChangeEventType.ADD, null));
+        notifyObservers(new PrietenieEntityChangeEvent(ChangeEventType.ADD, null));
     }
 
     public void removePrietenie(Long id) {
         repoPrietenie.delete(id);
-        notifyObservers(new UtilizatorEntityChangeEvent(ChangeEventType.DELETE, null));
+        notifyObservers(new PrietenieEntityChangeEvent(ChangeEventType.DELETE, null));
     }
 
     public Iterable<Prietenie> getAllPrietenii() {
@@ -61,7 +78,7 @@ public class PrietenieService {
 
         prietenie.setAccepted(true);
         repoPrietenie.update(prietenie);
-        notifyObservers(new UtilizatorEntityChangeEvent(ChangeEventType.UPDATE, null));
+        notifyObservers(new PrietenieEntityChangeEvent(ChangeEventType.UPDATE, null));
     }
 
     public PrietenieDto createPrietenieDto(Prietenie prietenie) {
@@ -70,5 +87,20 @@ public class PrietenieService {
         PrietenieDto prietenieDto = new PrietenieDto(utilizator1.getFirstName(), utilizator1.getLastName(), utilizator2.getFirstName(), utilizator2.getLastName(), prietenie.getFriendsFrom(), prietenie.getAccepted());
         prietenieDto.setId(prietenie.getId());
         return prietenieDto;
+    }
+
+    @Override
+    public void addObserver(Observer<PrietenieEntityChangeEvent> e) {
+        observers.add(e);
+    }
+
+    @Override
+    public void removeObserver(Observer<PrietenieEntityChangeEvent> e) {
+        observers.remove(e);
+    }
+
+    @Override
+    public void notifyObservers(PrietenieEntityChangeEvent t) {
+        observers.stream().forEach(x -> x.update(t));
     }
 }

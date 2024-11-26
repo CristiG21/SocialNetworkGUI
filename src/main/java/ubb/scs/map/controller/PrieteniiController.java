@@ -16,8 +16,9 @@ import javafx.stage.Stage;
 import ubb.scs.map.SocialNetworkApplication;
 import ubb.scs.map.domain.PrietenieDto;
 import ubb.scs.map.exceptions.ServiceException;
+import ubb.scs.map.service.PrietenieService;
 import ubb.scs.map.service.UtilizatorService;
-import ubb.scs.map.utils.events.UtilizatorEntityChangeEvent;
+import ubb.scs.map.utils.events.PrietenieEntityChangeEvent;
 import ubb.scs.map.utils.observer.Observer;
 
 import java.io.IOException;
@@ -26,9 +27,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-public class PrieteniiController implements Observer<UtilizatorEntityChangeEvent> {
+public class PrieteniiController implements Observer<PrietenieEntityChangeEvent> {
     Long userId;
     private UtilizatorService utilizatorService;
+    private PrietenieService prietenieService;
     private ObservableList<PrietenieDto> model = FXCollections.observableArrayList();
 
     @FXML
@@ -47,10 +49,11 @@ public class PrieteniiController implements Observer<UtilizatorEntityChangeEvent
     private TableColumn<PrietenieDto, Boolean> tableColumnAccepted;
 
 
-    public void setService(UtilizatorService utilizatorService, Long userId) {
+    public void setService(UtilizatorService utilizatorService, PrietenieService prietenieService, Long userId) {
         this.utilizatorService = utilizatorService;
+        this.prietenieService = prietenieService;
         this.userId = userId;
-        utilizatorService.addObserver(this);
+        prietenieService.addObserver(this);
         initModel();
     }
 
@@ -67,14 +70,14 @@ public class PrieteniiController implements Observer<UtilizatorEntityChangeEvent
     }
 
     private void initModel() {
-        Iterable<PrietenieDto> prietenii = utilizatorService.getAllPrieteniiByUtilizator(userId);
+        Iterable<PrietenieDto> prietenii = prietenieService.getAllPrieteniiByUtilizator(userId);
         List<PrietenieDto> friendships = StreamSupport.stream(prietenii.spliterator(), false)
                 .collect(Collectors.toList());
         model.setAll(friendships);
     }
 
     @Override
-    public void update(UtilizatorEntityChangeEvent utilizatorEntityChangeEvent) {
+    public void update(PrietenieEntityChangeEvent utilizatorEntityChangeEvent) {
         initModel();
     }
 
@@ -88,7 +91,7 @@ public class PrieteniiController implements Observer<UtilizatorEntityChangeEvent
         PrietenieDto prietenie = (PrietenieDto) tableView.getSelectionModel().getSelectedItem();
         if (prietenie != null) {
             try {
-                utilizatorService.removePrietenie(prietenie.getId());
+                prietenieService.removePrietenie(prietenie.getId());
                 MessageAlert.showMessage(null, Alert.AlertType.INFORMATION, "Succes", "Prietenia a fost stearsa cu succes!");
             } catch (ServiceException e) {
                 MessageAlert.showErrorMessage(null, e.getMessage());
@@ -107,7 +110,7 @@ public class PrieteniiController implements Observer<UtilizatorEntityChangeEvent
         }
 
         try {
-            utilizatorService.acceptPrietenie(userId, prietenie.getId());
+            prietenieService.acceptPrietenie(userId, prietenie.getId());
             MessageAlert.showMessage(null, Alert.AlertType.INFORMATION, "Succes", "Prietenia a fost acceptata cu succes!");
         } catch (ServiceException e) {
             MessageAlert.showErrorMessage(null, e.getMessage());
@@ -127,7 +130,7 @@ public class PrieteniiController implements Observer<UtilizatorEntityChangeEvent
             dialogStage.setScene(new Scene(root));
 
             AddPrietenieController addPrietenieViewController = fxmlLoader.getController();
-            addPrietenieViewController.setService(utilizatorService, userId);
+            addPrietenieViewController.setService(utilizatorService, prietenieService, userId);
 
             dialogStage.show();
         } catch (IOException e) {

@@ -9,6 +9,7 @@ import javafx.stage.Stage;
 import ubb.scs.map.SocialNetworkApplication;
 import ubb.scs.map.domain.Utilizator;
 import ubb.scs.map.exceptions.ServiceException;
+import ubb.scs.map.service.PrietenieService;
 import ubb.scs.map.service.UtilizatorService;
 import ubb.scs.map.utils.events.UtilizatorEntityChangeEvent;
 import ubb.scs.map.utils.observer.Observer;
@@ -27,6 +28,7 @@ import java.util.stream.StreamSupport;
 
 public class UtilizatoriController implements Observer<UtilizatorEntityChangeEvent> {
     private UtilizatorService utilizatorService;
+    private PrietenieService prietenieService;
     private ObservableList<Utilizator> model = FXCollections.observableArrayList();
 
     @FXML
@@ -37,8 +39,9 @@ public class UtilizatoriController implements Observer<UtilizatorEntityChangeEve
     private TableColumn<Utilizator, String> tableColumnLastName;
 
 
-    public void setService(UtilizatorService utilizatorService) {
+    public void setService(UtilizatorService utilizatorService, PrietenieService prietenieService) {
         this.utilizatorService = utilizatorService;
+        this.prietenieService = prietenieService;
         utilizatorService.addObserver(this);
         initModel();
     }
@@ -111,7 +114,7 @@ public class UtilizatoriController implements Observer<UtilizatorEntityChangeEve
             dialogStage.setScene(new Scene(root));
 
             PrieteniiController prieteniiController = fxmlLoader.getController();
-            prieteniiController.setService(utilizatorService, utilizator.getId());
+            prieteniiController.setService(utilizatorService, prietenieService, utilizator.getId());
 
             dialogStage.show();
         } catch (IOException e) {

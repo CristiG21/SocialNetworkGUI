@@ -14,4 +14,5 @@ module ubb.scs.map {
     exports ubb.scs.map;
     exports ubb.scs.map.domain;
     exports ubb.scs.map.controller;
+    exports ubb.scs.map.service;
 }

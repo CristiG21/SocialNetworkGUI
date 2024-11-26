@@ -14,12 +14,14 @@ import ubb.scs.map.domain.validators.UtilizatorValidator;
 import ubb.scs.map.repository.Repository;
 import ubb.scs.map.repository.database.PrietenieDbRepository;
 import ubb.scs.map.repository.database.UtilizatorDbRepository;
+import ubb.scs.map.service.PrietenieService;
 import ubb.scs.map.service.UtilizatorService;
 
 import java.io.IOException;
 
 public class SocialNetworkApplication extends Application {
     private UtilizatorService utilizatorService;
+    private PrietenieService prietenieService;
 
     public static void main(String[] args) {
         launch(args);
@@ -35,6 +37,7 @@ public class SocialNetworkApplication extends Application {
         Repository<Long, Utilizator> utilizatorRepository = new UtilizatorDbRepository(url, username, pasword, new UtilizatorValidator());
         Repository<Long, Prietenie> prietenieRepository = new PrietenieDbRepository(url, username, pasword, new PrietenieValidator());
         utilizatorService = UtilizatorService.getInstance(utilizatorRepository, prietenieRepository);
+        prietenieService = PrietenieService.getInstance(utilizatorRepository, prietenieRepository);
 
         initView(primaryStage);
         primaryStage.setWidth(800);
@@ -48,6 +51,6 @@ public class SocialNetworkApplication extends Application {
         primaryStage.setScene(new Scene(userLayout));
 
         UtilizatoriController userController = fxmlLoader.getController();
-        userController.setService(utilizatorService);
+        userController.setService(utilizatorService, prietenieService);
     }
 }

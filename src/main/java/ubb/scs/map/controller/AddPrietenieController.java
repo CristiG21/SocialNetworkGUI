@@ -10,6 +10,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import ubb.scs.map.domain.Utilizator;
 import ubb.scs.map.exceptions.ServiceException;
+import ubb.scs.map.service.PrietenieService;
 import ubb.scs.map.service.UtilizatorService;
 import ubb.scs.map.utils.events.UtilizatorEntityChangeEvent;
 import ubb.scs.map.utils.observer.Observer;
@@ -21,6 +22,7 @@ import java.util.stream.StreamSupport;
 public class AddPrietenieController implements Observer<UtilizatorEntityChangeEvent> {
     private Long userId;
     private UtilizatorService utilizatorService;
+    private PrietenieService prietenieService;
     private ObservableList<Utilizator> model = FXCollections.observableArrayList();
 
     @FXML
@@ -30,9 +32,11 @@ public class AddPrietenieController implements Observer<UtilizatorEntityChangeEv
     @FXML
     private TableColumn<Utilizator, String> tableColumnLastName;
 
-    public void setService(UtilizatorService utilizatorService, Long userId) {
+    public void setService(UtilizatorService utilizatorService, PrietenieService prietenieService, Long userId) {
         this.utilizatorService = utilizatorService;
+        this.prietenieService = prietenieService;
         this.userId = userId;
+        utilizatorService.addObserver(this);
         initModel();
     }
 
@@ -60,7 +64,7 @@ public class AddPrietenieController implements Observer<UtilizatorEntityChangeEv
         Utilizator utilizator = (Utilizator) tableView.getSelectionModel().getSelectedItem();
         if (utilizator != null) {
             try {
-                utilizatorService.addPrietenie(userId, utilizator.getId());
+                prietenieService.addPrietenie(userId, utilizator.getId());
                 MessageAlert.showMessage(null, Alert.AlertType.INFORMATION, "Succes", "Prietenia a fost adaugata cu succes!");
             } catch (ServiceException e) {
                 MessageAlert.showErrorMessage(null, e.getMessage());
