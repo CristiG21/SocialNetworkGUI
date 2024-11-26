@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="Gradle: org.openjfx:javafx-controls:mac-aarch64:21.0.5" type="java-imported" external-system-id="GRADLE">
+    <properties groupId="org.openjfx" artifactId="javafx-controls" version="21.0.5" baseVersion="21.0.5" />
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.openjfx/javafx-controls/21.0.5/77577b972b6df0f066fc0d48d91d53b318901ee4/javafx-controls-21.0.5-mac-aarch64.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.openjfx/javafx-controls/21.0.5/48378999442ac7217289911630a147d5c212b8f/javafx-controls-21.0.5-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
