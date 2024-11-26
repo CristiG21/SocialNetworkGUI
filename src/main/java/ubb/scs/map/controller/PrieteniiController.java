@@ -31,22 +31,29 @@ public class PrieteniiController implements Observer<PrietenieEntityChangeEvent>
     Long userId;
     private UtilizatorService utilizatorService;
     private PrietenieService prietenieService;
-    private ObservableList<PrietenieDto> model = FXCollections.observableArrayList();
+    private ObservableList<PrietenieDto> modelReceived = FXCollections.observableArrayList();
+    private ObservableList<PrietenieDto> modelSent = FXCollections.observableArrayList();
 
     @FXML
-    private TableView<PrietenieDto> tableView;
+    private TableView<PrietenieDto> tableViewReceived;
     @FXML
-    private TableColumn<PrietenieDto, String> tableColumnSenderFirstName;
+    private TableColumn<PrietenieDto, String> tableColumnReceivedFirstName;
     @FXML
-    private TableColumn<PrietenieDto, String> tableColumnSenderLastName;
+    private TableColumn<PrietenieDto, String> tableColumnReceivedLastName;
     @FXML
-    private TableColumn<PrietenieDto, String> tableColumnReceiverFirstName;
+    private TableColumn<PrietenieDto, LocalDateTime> tableColumnReceivedFriendsFrom;
     @FXML
-    private TableColumn<PrietenieDto, String> tableColumnReceiverLastName;
+    private TableColumn<PrietenieDto, Boolean> tableColumnReceivedAccepted;
     @FXML
-    private TableColumn<PrietenieDto, LocalDateTime> tableColumnFriendsFrom;
+    private TableView<PrietenieDto> tableViewSent;
     @FXML
-    private TableColumn<PrietenieDto, Boolean> tableColumnAccepted;
+    private TableColumn<PrietenieDto, String> tableColumnSentFirstName;
+    @FXML
+    private TableColumn<PrietenieDto, String> tableColumnSentLastName;
+    @FXML
+    private TableColumn<PrietenieDto, LocalDateTime> tableColumnSentFriendsFrom;
+    @FXML
+    private TableColumn<PrietenieDto, Boolean> tableColumnSentAccepted;
 
 
     public void setService(UtilizatorService utilizatorService, PrietenieService prietenieService, Long userId) {
@@ -55,25 +62,39 @@ public class PrieteniiController implements Observer<PrietenieEntityChangeEvent>
         this.userId = userId;
         prietenieService.addObserver(this);
         initModel();
+
+        long pendingFriendships = modelReceived.stream()
+                .filter(prietenieDto -> !prietenieDto.getAccepted())
+                .count();
+        if (pendingFriendships > 0)
+            MessageAlert.showMessage(null, Alert.AlertType.INFORMATION, "Atentie!", "Aveti cereri noi de prietenie!");
     }
 
     @FXML
     public void initialize() {
-        tableColumnSenderFirstName.setCellValueFactory(new PropertyValueFactory<PrietenieDto, String>("utilizator1FirstName"));
-        tableColumnSenderLastName.setCellValueFactory(new PropertyValueFactory<PrietenieDto, String>("utilizator1LastName"));
-        tableColumnReceiverFirstName.setCellValueFactory(new PropertyValueFactory<PrietenieDto, String>("utilizator2FirstName"));
-        tableColumnReceiverLastName.setCellValueFactory(new PropertyValueFactory<PrietenieDto, String>("utilizator2LastName"));
-        tableColumnFriendsFrom.setCellValueFactory(new PropertyValueFactory<PrietenieDto, LocalDateTime>("friendsFrom"));
-        tableColumnAccepted.setCellValueFactory(new PropertyValueFactory<PrietenieDto, Boolean>("accepted"));
+        tableColumnReceivedFirstName.setCellValueFactory(new PropertyValueFactory<>("utilizatorFirstName"));
+        tableColumnReceivedLastName.setCellValueFactory(new PropertyValueFactory<>("utilizatorLastName"));
+        tableColumnReceivedFriendsFrom.setCellValueFactory(new PropertyValueFactory<>("friendsFrom"));
+        tableColumnReceivedAccepted.setCellValueFactory(new PropertyValueFactory<>("accepted"));
+        tableViewReceived.setItems(modelReceived);
 
-        tableView.setItems(model);
+        tableColumnSentFirstName.setCellValueFactory(new PropertyValueFactory<>("utilizatorFirstName"));
+        tableColumnSentLastName.setCellValueFactory(new PropertyValueFactory<>("utilizatorLastName"));
+        tableColumnSentFriendsFrom.setCellValueFactory(new PropertyValueFactory<>("friendsFrom"));
+        tableColumnSentAccepted.setCellValueFactory(new PropertyValueFactory<>("accepted"));
+        tableViewSent.setItems(modelSent);
     }
 
     private void initModel() {
-        Iterable<PrietenieDto> prietenii = prietenieService.getAllPrieteniiByUtilizator(userId);
-        List<PrietenieDto> friendships = StreamSupport.stream(prietenii.spliterator(), false)
-                .collect(Collectors.toList());
-        model.setAll(friendships);
+        Iterable<PrietenieDto> prieteniiReceived = prietenieService.getAllReceivedPrietenii(userId);
+        List<PrietenieDto> friendshipsReceived = StreamSupport.stream(prieteniiReceived.spliterator(), false)
+                .toList();
+        modelReceived.setAll(friendshipsReceived);
+
+        Iterable<PrietenieDto> prieteniiSent = prietenieService.getAllSentPrietenii(userId);
+        List<PrietenieDto> friendshipsSent = StreamSupport.stream(prieteniiSent.spliterator(), false)
+                .toList();
+        modelSent.setAll(friendshipsSent);
     }
 
     @Override
@@ -87,8 +108,18 @@ public class PrieteniiController implements Observer<PrietenieEntityChangeEvent>
     }
 
     @FXML
-    public void handleDeletePrietenie(ActionEvent actionEvent) {
-        PrietenieDto prietenie = (PrietenieDto) tableView.getSelectionModel().getSelectedItem();
+    public void handleDeleteReceivedPrietenie(ActionEvent actionEvent) {
+        PrietenieDto prietenie = (PrietenieDto) tableViewReceived.getSelectionModel().getSelectedItem();
+        handleDeletePrietenie(prietenie);
+    }
+
+    @FXML
+    public void handleDeleteSentPrietenie(ActionEvent actionEvent) {
+        PrietenieDto prietenie = (PrietenieDto) tableViewSent.getSelectionModel().getSelectedItem();
+        handleDeletePrietenie(prietenie);
+    }
+
+    private void handleDeletePrietenie(PrietenieDto prietenie) {
         if (prietenie != null) {
             try {
                 prietenieService.removePrietenie(prietenie.getId());
@@ -103,7 +134,7 @@ public class PrieteniiController implements Observer<PrietenieEntityChangeEvent>
 
     @FXML
     public void handleAcceptPrietenie(ActionEvent actionEvent) {
-        PrietenieDto prietenie = (PrietenieDto) tableView.getSelectionModel().getSelectedItem();
+        PrietenieDto prietenie = (PrietenieDto) tableViewReceived.getSelectionModel().getSelectedItem();
         if (prietenie == null) {
             MessageAlert.showErrorMessage(null, "Nu este selectata nicio prietenie!");
             return;
