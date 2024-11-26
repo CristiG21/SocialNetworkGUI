@@ -36,7 +36,7 @@ public class SocialNetworkApplication extends Application {
 
         Repository<Long, Utilizator> utilizatorRepository = new UtilizatorDbRepository(url, username, pasword, new UtilizatorValidator());
         Repository<Long, Prietenie> prietenieRepository = new PrietenieDbRepository(url, username, pasword, new PrietenieValidator());
-        utilizatorService = UtilizatorService.getInstance(utilizatorRepository, prietenieRepository);
+        utilizatorService = UtilizatorService.getInstance(utilizatorRepository);
         prietenieService = PrietenieService.getInstance(utilizatorRepository, prietenieRepository);
 
         initView(primaryStage);

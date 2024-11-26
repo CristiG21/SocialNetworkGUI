@@ -4,7 +4,8 @@ import ubb.scs.map.domain.Prietenie;
 
 public class PrietenieEntityChangeEvent implements Event {
     private final ChangeEventType type;
-    private final Prietenie data, oldData;
+    private final Prietenie data;
+    private Prietenie oldData;
 
     public PrietenieEntityChangeEvent(ChangeEventType type, Prietenie data) {
         this.type = type;
