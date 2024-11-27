@@ -52,23 +52,17 @@ public class PrietenieService implements Observable<PrietenieEntityChangeEvent> 
     }
 
     public Iterable<PrietenieDto> getAllReceivedPrietenii(Long id) {
-        Set<PrietenieDto> prietenii = new HashSet<>();
-        repoPrietenie.findAll().forEach(prietenie -> {
-            if (Objects.equals(prietenie.getUtilizator2Id(), id)) {
-                prietenii.add(createPrietenieDto(prietenie, true));
-            }
-        });
-        return prietenii;
+        return repoPrietenie.findAll().stream()
+                .filter(prietenie -> Objects.equals(prietenie.getUtilizator2Id(), id))
+                .map(prietenie -> createPrietenieDto(prietenie, true))
+                .toList();
     }
 
     public Iterable<PrietenieDto> getAllSentPrietenii(Long id) {
-        Set<PrietenieDto> prietenii = new HashSet<>();
-        repoPrietenie.findAll().forEach(prietenie -> {
-            if (Objects.equals(prietenie.getUtilizator1Id(), id)) {
-                prietenii.add(createPrietenieDto(prietenie, false));
-            }
-        });
-        return prietenii;
+        return repoPrietenie.findAll().stream()
+                .filter(prietenie -> Objects.equals(prietenie.getUtilizator1Id(), id))
+                .map(prietenie -> createPrietenieDto(prietenie, false))
+                .toList();
     }
 
     public void acceptPrietenie(Long userId, Long prietenieId) {

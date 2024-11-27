@@ -1,6 +1,5 @@
 package ubb.scs.map.service;
 
-import ubb.scs.map.domain.Prietenie;
 import ubb.scs.map.domain.Utilizator;
 import ubb.scs.map.exceptions.ServiceException;
 import ubb.scs.map.repository.Repository;
@@ -9,7 +8,9 @@ import ubb.scs.map.utils.events.UtilizatorEntityChangeEvent;
 import ubb.scs.map.utils.observer.Observable;
 import ubb.scs.map.utils.observer.Observer;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 public class UtilizatorService implements Observable<UtilizatorEntityChangeEvent> {
     private static UtilizatorService instance = null;

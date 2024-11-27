@@ -130,7 +130,6 @@ public class ChatsController implements Observer<ChatEntityChangeEvent> {
             showChatDialog(chat);
         else {
             MessageAlert.showErrorMessage(null, "Nu este selectat niciun chat!");
-            return;
         }
     }
 

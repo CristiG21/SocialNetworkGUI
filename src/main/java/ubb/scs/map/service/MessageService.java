@@ -3,10 +3,8 @@ package ubb.scs.map.service;
 import ubb.scs.map.domain.Message;
 import ubb.scs.map.domain.MessageDto;
 import ubb.scs.map.domain.Utilizator;
-import ubb.scs.map.exceptions.ServiceException;
 import ubb.scs.map.repository.Repository;
 import ubb.scs.map.utils.events.ChangeEventType;
-import ubb.scs.map.utils.events.ChatEntityChangeEvent;
 import ubb.scs.map.utils.events.MessageEntityChangeEvent;
 import ubb.scs.map.utils.observer.Observable;
 import ubb.scs.map.utils.observer.Observer;
@@ -47,7 +45,7 @@ public class MessageService implements Observable<MessageEntityChangeEvent> {
     public Iterable<MessageDto> getAllMessagesByChatId(Long id) {
         return repoMessage.findAll().stream()
                 .filter(message -> Objects.equals(message.getChatId(), id))
-                .sorted((message1, message2) -> message1.getDate().compareTo(message2.getDate()))
+                .sorted(Comparator.comparing(Message::getDate))
                 .map(this::createMessageDto)
                 .toList();
     }

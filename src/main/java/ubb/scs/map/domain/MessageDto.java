@@ -1,11 +1,9 @@
 package ubb.scs.map.domain;
 
-import java.time.LocalDateTime;
-
 public class MessageDto extends Entity<Long> {
-    private String userName;
-    private String message;
-    private String replyMessage;
+    private final String userName;
+    private final String message;
+    private final String replyMessage;
 
     public MessageDto(String userName, String message, String replyMessage) {
         this.userName = userName;
