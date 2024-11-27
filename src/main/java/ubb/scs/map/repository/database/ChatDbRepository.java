@@ -1,6 +1,6 @@
 package ubb.scs.map.repository.database;
 
-import ubb.scs.map.domain.Utilizator;
+import ubb.scs.map.domain.Chat;
 import ubb.scs.map.domain.validators.Validator;
 import ubb.scs.map.repository.Repository;
 
@@ -10,13 +10,13 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
-public class UtilizatorDbRepository implements Repository<Long, Utilizator> {
+public class ChatDbRepository implements Repository<Long, Chat> {
     private final String url;
     private final String username;
     private final String password;
-    private final Validator<Utilizator> validator;
+    private final Validator<Chat> validator;
 
-    public UtilizatorDbRepository(String url, String username, String password, Validator<Utilizator> validator) {
+    public ChatDbRepository(String url, String username, String password, Validator<Chat> validator) {
         this.url = url;
         this.username = username;
         this.password = password;
@@ -24,65 +24,65 @@ public class UtilizatorDbRepository implements Repository<Long, Utilizator> {
     }
 
     @Override
-    public Optional<Utilizator> findOne(Long id) {
+    public Optional<Chat> findOne(Long id) {
         if (id == null)
             throw new IllegalArgumentException("Id cannot be null!");
 
-        Utilizator utilizator = null;
+        Chat chat = null;
         try (Connection connection = DriverManager.getConnection(url, username, password);
-             PreparedStatement statement = connection.prepareStatement("SELECT * from users WHERE id = ?")) {
+             PreparedStatement statement = connection.prepareStatement("SELECT * from chats WHERE id = ?")) {
             statement.setLong(1, id);
             ResultSet resultSet = statement.executeQuery();
 
             if (resultSet.next()) {
-                String firstName = resultSet.getString("first_name");
-                String lastName = resultSet.getString("last_name");
+                String name = resultSet.getString("name");
+                Long adminId = resultSet.getLong("admin_id");
 
-                utilizator = new Utilizator(firstName, lastName);
-                utilizator.setId(id);
+                chat = new Chat(name, adminId);
+                chat.setId(id);
             }
 
             resultSet.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return Optional.ofNullable(utilizator);
+        return Optional.ofNullable(chat);
     }
 
     @Override
-    public Collection<Utilizator> findAll() {
-        Set<Utilizator> users = new HashSet<>();
+    public Collection<Chat> findAll() {
+        Set<Chat> chats = new HashSet<>();
         try (Connection connection = DriverManager.getConnection(url, username, password);
-             PreparedStatement statement = connection.prepareStatement("SELECT * from users");
+             PreparedStatement statement = connection.prepareStatement("SELECT * from chats");
              ResultSet resultSet = statement.executeQuery()) {
 
             while (resultSet.next()) {
                 Long id = resultSet.getLong("id");
-                String firstName = resultSet.getString("first_name");
-                String lastName = resultSet.getString("last_name");
+                String name = resultSet.getString("name");
+                Long adminId = resultSet.getLong("admin_id");
 
-                Utilizator utilizator = new Utilizator(firstName, lastName);
-                utilizator.setId(id);
-                users.add(utilizator);
+                Chat chat = new Chat(name, adminId);
+                chat.setId(id);
+                chats.add(chat);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return users;
+        return chats;
     }
 
     @Override
-    public Optional<Utilizator> save(Utilizator entity) {
+    public Optional<Chat> save(Chat entity) {
         if (entity == null)
             throw new IllegalArgumentException("Entity cannot be null!");
         validator.validate(entity);
 
         int rez = -1;
         try (Connection connection = DriverManager.getConnection(url, username, password);
-             PreparedStatement statement = connection.prepareStatement("INSERT INTO users (first_name, last_name) VALUES (?, ?)")
+             PreparedStatement statement = connection.prepareStatement("INSERT INTO chats (name, admin_id) VALUES (?, ?)")
         ) {
-            statement.setString(1, entity.getFirstName());
-            statement.setString(2, entity.getLastName());
+            statement.setString(1, entity.getName());
+            statement.setLong(2, entity.getAdminId());
             rez = statement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -93,16 +93,16 @@ public class UtilizatorDbRepository implements Repository<Long, Utilizator> {
     }
 
     @Override
-    public Optional<Utilizator> delete(Long id) {
+    public Optional<Chat> delete(Long id) {
         if (id == null)
             throw new IllegalArgumentException("Id cannot be null!");
 
-        Optional<Utilizator> utilizator = findOne(id);
-        if (utilizator.isEmpty())
+        Optional<Chat> chat = findOne(id);
+        if (chat.isEmpty())
             return Optional.empty();
         int rez = -1;
         try (Connection connection = DriverManager.getConnection(url, username, password);
-             PreparedStatement statement = connection.prepareStatement("DELETE FROM users WHERE id = ?")
+             PreparedStatement statement = connection.prepareStatement("DELETE FROM chats WHERE id = ?")
         ) {
             statement.setLong(1, id);
             rez = statement.executeUpdate();
@@ -110,22 +110,22 @@ public class UtilizatorDbRepository implements Repository<Long, Utilizator> {
             e.printStackTrace();
         }
         if (rez > 0)
-            return utilizator;
+            return chat;
         return Optional.empty();
     }
 
     @Override
-    public Optional<Utilizator> update(Utilizator entity) {
+    public Optional<Chat> update(Chat entity) {
         if (entity == null)
             throw new IllegalArgumentException("Entity nu poate fi null!");
         validator.validate(entity);
 
         int rez = -1;
         try (Connection connection = DriverManager.getConnection(url, username, password);
-             PreparedStatement statement = connection.prepareStatement("UPDATE users SET first_name = ?, last_name = ? WHERE id = ?")
+             PreparedStatement statement = connection.prepareStatement("UPDATE chats SET name = ?, admin_id = ? WHERE id = ?")
         ) {
-            statement.setString(1, entity.getFirstName());
-            statement.setString(2, entity.getLastName());
+            statement.setString(1, entity.getName());
+            statement.setLong(2, entity.getAdminId());
             statement.setLong(3, entity.getId());
             rez = statement.executeUpdate();
         } catch (SQLException e) {

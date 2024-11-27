@@ -3,6 +3,7 @@ package ubb.scs.map.repository;
 import ubb.scs.map.domain.Entity;
 import ubb.scs.map.domain.validators.ValidationException;
 
+import java.util.Collection;
 import java.util.Optional;
 
 /**
@@ -23,7 +24,7 @@ public interface Repository<ID, E extends Entity<ID>> {
     /**
      * @return all entities
      */
-    Iterable<E> findAll();
+    Collection<E> findAll();
 
     /**
      * @param entity entity must be not null

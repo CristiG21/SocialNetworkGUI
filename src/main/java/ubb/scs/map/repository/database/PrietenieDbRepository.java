@@ -6,6 +6,7 @@ import ubb.scs.map.repository.Repository;
 
 import java.sql.*;
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -52,7 +53,7 @@ public class PrietenieDbRepository implements Repository<Long, Prietenie> {
     }
 
     @Override
-    public Iterable<Prietenie> findAll() {
+    public Collection<Prietenie> findAll() {
         Set<Prietenie> prietenii = new HashSet<>();
         try (Connection connection = DriverManager.getConnection(url, username, password);
              PreparedStatement statement = connection.prepareStatement("SELECT * from friendships");

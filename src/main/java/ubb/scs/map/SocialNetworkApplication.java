@@ -7,21 +7,22 @@ import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import ubb.scs.map.controller.UtilizatoriController;
-import ubb.scs.map.domain.Prietenie;
-import ubb.scs.map.domain.Utilizator;
-import ubb.scs.map.domain.validators.PrietenieValidator;
-import ubb.scs.map.domain.validators.UtilizatorValidator;
+import ubb.scs.map.domain.*;
+import ubb.scs.map.domain.validators.*;
 import ubb.scs.map.repository.Repository;
-import ubb.scs.map.repository.database.PrietenieDbRepository;
-import ubb.scs.map.repository.database.UtilizatorDbRepository;
+import ubb.scs.map.repository.database.*;
+import ubb.scs.map.service.ChatService;
 import ubb.scs.map.service.PrietenieService;
 import ubb.scs.map.service.UtilizatorService;
+import ubb.scs.map.service.MessageService;
 
 import java.io.IOException;
 
 public class SocialNetworkApplication extends Application {
     private UtilizatorService utilizatorService;
     private PrietenieService prietenieService;
+    private ChatService chatService;
+    private MessageService messageService;
 
     public static void main(String[] args) {
         launch(args);
@@ -36,8 +37,13 @@ public class SocialNetworkApplication extends Application {
 
         Repository<Long, Utilizator> utilizatorRepository = new UtilizatorDbRepository(url, username, pasword, new UtilizatorValidator());
         Repository<Long, Prietenie> prietenieRepository = new PrietenieDbRepository(url, username, pasword, new PrietenieValidator());
+        Repository<Long, Chat> chatRepository = new ChatDbRepository(url, username, pasword, new ChatValidator());
+        Repository<Long, UtilizatorChat> utilizatorChatRepository = new UtilizatorChatDbRepository(url, username, pasword, new UtilizatorChatValidator());
+        Repository<Long, Message> messageRepository = new MessageDbRepository(url, username, pasword, new MessageValidator());
         utilizatorService = UtilizatorService.getInstance(utilizatorRepository);
         prietenieService = PrietenieService.getInstance(utilizatorRepository, prietenieRepository);
+        chatService = ChatService.getInstance(chatRepository, utilizatorChatRepository);
+        messageService = MessageService.getInstance(utilizatorRepository, messageRepository);
 
         initView(primaryStage);
         primaryStage.setWidth(800);
@@ -51,6 +57,6 @@ public class SocialNetworkApplication extends Application {
         primaryStage.setScene(new Scene(userLayout));
 
         UtilizatoriController userController = fxmlLoader.getController();
-        userController.setService(utilizatorService, prietenieService);
+        userController.setService(utilizatorService, prietenieService, chatService, messageService);
     }
 }

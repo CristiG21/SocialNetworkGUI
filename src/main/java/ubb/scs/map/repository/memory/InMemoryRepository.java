@@ -6,6 +6,7 @@ import ubb.scs.map.domain.validators.ValidationException;
 import ubb.scs.map.domain.validators.Validator;
 import ubb.scs.map.repository.Repository;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -28,7 +29,7 @@ public class InMemoryRepository<ID, E extends Entity<ID>> implements Repository<
     }
 
     @Override
-    public Iterable<E> findAll() {
+    public Collection<E> findAll() {
         return this.entities.values();
     }
 

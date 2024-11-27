@@ -5,6 +5,7 @@ import ubb.scs.map.domain.validators.Validator;
 import ubb.scs.map.repository.memory.InMemoryRepository;
 
 import java.io.*;
+import java.util.Collection;
 import java.util.Optional;
 
 public abstract class AbstractFileRepository<ID, E extends Entity<ID>> extends InMemoryRepository<ID, E> {
@@ -26,7 +27,7 @@ public abstract class AbstractFileRepository<ID, E extends Entity<ID>> extends I
     }
 
     @Override
-    public Iterable<E> findAll() {
+    public Collection<E> findAll() {
         return super.findAll();
     }
 

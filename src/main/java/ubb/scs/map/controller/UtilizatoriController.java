@@ -9,6 +9,8 @@ import javafx.stage.Stage;
 import ubb.scs.map.SocialNetworkApplication;
 import ubb.scs.map.domain.Utilizator;
 import ubb.scs.map.exceptions.ServiceException;
+import ubb.scs.map.service.ChatService;
+import ubb.scs.map.service.MessageService;
 import ubb.scs.map.service.PrietenieService;
 import ubb.scs.map.service.UtilizatorService;
 import ubb.scs.map.utils.events.UtilizatorEntityChangeEvent;
@@ -29,6 +31,8 @@ import java.util.stream.StreamSupport;
 public class UtilizatoriController implements Observer<UtilizatorEntityChangeEvent> {
     private UtilizatorService utilizatorService;
     private PrietenieService prietenieService;
+    private ChatService chatService;
+    private MessageService messageService;
     private final ObservableList<Utilizator> model = FXCollections.observableArrayList();
 
     @FXML
@@ -39,9 +43,11 @@ public class UtilizatoriController implements Observer<UtilizatorEntityChangeEve
     private TableColumn<Utilizator, String> tableColumnLastName;
 
 
-    public void setService(UtilizatorService utilizatorService, PrietenieService prietenieService) {
+    public void setService(UtilizatorService utilizatorService, PrietenieService prietenieService, ChatService chatService, MessageService messageService) {
         this.utilizatorService = utilizatorService;
         this.prietenieService = prietenieService;
+        this.chatService = chatService;
+        this.messageService = messageService;
         utilizatorService.addObserver(this);
         initModel();
     }
@@ -115,6 +121,34 @@ public class UtilizatoriController implements Observer<UtilizatorEntityChangeEve
 
             PrieteniiController prieteniiController = fxmlLoader.getController();
             prieteniiController.setService(utilizatorService, prietenieService, utilizator.getId());
+
+            dialogStage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    public void handleOpenChats(ActionEvent actionEvent) {
+        Utilizator utilizator = tableView.getSelectionModel().getSelectedItem();
+        if (utilizator == null) {
+            MessageAlert.showErrorMessage(null, "Nu este selectat niciun utilizator!");
+            return;
+        }
+
+        try {
+            // create a new stage for the popup dialog.
+            FXMLLoader fxmlLoader = new FXMLLoader(SocialNetworkApplication.class.getResource("views/chats-view.fxml"));
+            AnchorPane root = fxmlLoader.load();
+
+            // Create the dialog Stage.
+            Stage dialogStage = new Stage();
+            dialogStage.setTitle("Chats");
+            dialogStage.initModality(Modality.WINDOW_MODAL);
+            dialogStage.setScene(new Scene(root));
+
+            ChatsController chatsController = fxmlLoader.getController();
+            chatsController.setService(utilizatorService, chatService, messageService, utilizator.getId());
 
             dialogStage.show();
         } catch (IOException e) {
