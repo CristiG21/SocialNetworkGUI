@@ -7,7 +7,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
-import ubb.scs.map.domain.MessageDto;
+import ubb.scs.map.dto.MessageDto;
 import ubb.scs.map.domain.validators.ValidationException;
 import ubb.scs.map.service.MessageService;
 import ubb.scs.map.utils.events.MessageEntityChangeEvent;

@@ -36,7 +36,7 @@ public class SocialNetworkApplication extends Application {
         String pasword = dotenv.get("DATABASE_PASSWORD");
 
         Repository<Long, Utilizator> utilizatorRepository = new UtilizatorDbRepository(url, username, pasword, new UtilizatorValidator());
-        Repository<Long, Prietenie> prietenieRepository = new PrietenieDbRepository(url, username, pasword, new PrietenieValidator());
+        PrietenieRepository prietenieRepository = new PrietenieDbRepository(url, username, pasword, new PrietenieValidator());
         Repository<Long, Chat> chatRepository = new ChatDbRepository(url, username, pasword, new ChatValidator());
         Repository<Long, UtilizatorChat> utilizatorChatRepository = new UtilizatorChatDbRepository(url, username, pasword, new UtilizatorChatValidator());
         Repository<Long, Message> messageRepository = new MessageDbRepository(url, username, pasword, new MessageValidator());

@@ -1,4 +1,6 @@
-package ubb.scs.map.domain;
+package ubb.scs.map.dto;
+
+import ubb.scs.map.domain.Entity;
 
 import java.time.LocalDateTime;
 

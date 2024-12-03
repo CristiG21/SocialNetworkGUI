@@ -18,4 +18,6 @@ module ubb.scs.map {
     exports ubb.scs.map.repository;
     exports ubb.scs.map.utils.observer;
     exports ubb.scs.map.utils.events;
+    exports ubb.scs.map.utils.paging;
+    exports ubb.scs.map.dto;
 }

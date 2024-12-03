@@ -1,4 +1,6 @@
-package ubb.scs.map.domain;
+package ubb.scs.map.dto;
+
+import ubb.scs.map.domain.Entity;
 
 public class MessageDto extends Entity<Long> {
     private final String userName;

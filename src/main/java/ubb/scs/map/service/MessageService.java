@@ -1,7 +1,7 @@
 package ubb.scs.map.service;
 
 import ubb.scs.map.domain.Message;
-import ubb.scs.map.domain.MessageDto;
+import ubb.scs.map.dto.MessageDto;
 import ubb.scs.map.domain.Utilizator;
 import ubb.scs.map.repository.Repository;
 import ubb.scs.map.utils.events.ChangeEventType;

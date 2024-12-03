@@ -10,47 +10,44 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane prefHeight="520.0" prefWidth="800.0" stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/23.0.1"
-            xmlns:fx="http://javafx.com/fxml/1" fx:controller="ubb.scs.map.controller.PrieteniiController">
+<AnchorPane prefHeight="520.0" prefWidth="800.0" stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ubb.scs.map.controller.PrieteniiController">
     <children>
-        <SplitPane dividerPositions="0.5" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
-                   AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <SplitPane dividerPositions="0.5" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <items>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="521.0">
                     <children>
-                        <VBox prefHeight="200.0" prefWidth="100.0" AnchorPane.bottomAnchor="0.0"
-                              AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <VBox prefHeight="200.0" prefWidth="100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                             <children>
-                                <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="18.0" prefWidth="1010.0"
-                                       text="Received Friendships" textAlignment="CENTER">
+                                <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="18.0" prefWidth="1010.0" text="Received Friendships" textAlignment="CENTER">
                                     <VBox.margin>
-                                        <Insets/>
+                                        <Insets />
                                     </VBox.margin>
                                 </Label>
-                                <TableView fx:id="tableViewReceived" prefHeight="500.0" prefWidth="663.0">
+                                <TableView fx:id="tableViewReceived" prefHeight="480.0" prefWidth="396.0">
                                     <columns>
-                                        <TableColumn fx:id="tableColumnReceivedFirstName" prefWidth="331.5"
-                                                     text="First Name"/>
-                                        <TableColumn fx:id="tableColumnReceivedLastName" minWidth="0.0"
-                                                     prefWidth="329.5" text="Last Name"/>
-                                        <TableColumn fx:id="tableColumnReceivedFriendsFrom" minWidth="0.0"
-                                                     prefWidth="329.5" text="Friends From"/>
-                                        <TableColumn fx:id="tableColumnReceivedAccepted" minWidth="0.0"
-                                                     prefWidth="329.5" text="Accepted"/>
+                                        <TableColumn fx:id="tableColumnReceivedFirstName" prefWidth="331.5" text="First Name" />
+                                        <TableColumn fx:id="tableColumnReceivedLastName" minWidth="0.0" prefWidth="329.5" text="Last Name" />
+                                        <TableColumn fx:id="tableColumnReceivedFriendsFrom" minWidth="0.0" prefWidth="329.5" text="Friends From" />
+                                        <TableColumn fx:id="tableColumnReceivedAccepted" minWidth="0.0" prefWidth="329.5" text="Accepted" />
                                     </columns>
                                     <columnResizePolicy>
-                                        <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
+                                        <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                                     </columnResizePolicy>
                                 </TableView>
+                        <AnchorPane prefHeight="97.0" prefWidth="396.0">
+                           <children>
+                              <Button fx:id="buttonPreviousPageReceived" layoutX="10.0" layoutY="2.0" mnemonicParsing="false" onAction="#handlePreviousPageReceived" text="Previous" />
+                              <Label fx:id="labelPageReceived" layoutX="164.0" layoutY="6.0" text="Page 0 of 0" />
+                              <Button fx:id="buttonNextPageReceived" layoutX="346.0" layoutY="1.0" mnemonicParsing="false" onAction="#handleNextPageReceived" text="Next" />
+                           </children>
+                        </AnchorPane>
                                 <HBox prefHeight="34.0" prefWidth="655.0" spacing="20.0">
                                     <children>
-                                        <Button mnemonicParsing="false" onAction="#handleDeleteReceivedPrietenie"
-                                                text="Delete"/>
-                                        <Button mnemonicParsing="false" onAction="#handleAcceptPrietenie"
-                                                text="Accept"/>
+                                        <Button mnemonicParsing="false" onAction="#handleDeleteReceivedPrietenie" text="Delete" />
+                                        <Button mnemonicParsing="false" onAction="#handleAcceptPrietenie" text="Accept" />
                                     </children>
                                     <padding>
-                                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+                                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                                     </padding>
                                 </HBox>
                             </children>
@@ -59,38 +56,38 @@
                 </AnchorPane>
                 <AnchorPane prefHeight="200.0" prefWidth="200.0">
                     <children>
-                        <VBox prefHeight="200.0" prefWidth="100.0" AnchorPane.bottomAnchor="0.0"
-                              AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <VBox prefHeight="200.0" prefWidth="100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                             <children>
-                                <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="18.0" prefWidth="1010.0"
-                                       text="Sent Friendships" textAlignment="CENTER">
+                                <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="18.0" prefWidth="1010.0" text="Sent Friendships" textAlignment="CENTER">
                                     <VBox.margin>
-                                        <Insets/>
+                                        <Insets />
                                     </VBox.margin>
                                 </Label>
-                                <TableView fx:id="tableViewSent" prefHeight="500.0" prefWidth="663.0">
+                                <TableView fx:id="tableViewSent" prefHeight="479.0" prefWidth="396.0">
                                     <columns>
-                                        <TableColumn fx:id="tableColumnSentFirstName" prefWidth="331.5"
-                                                     text="First Name"/>
-                                        <TableColumn fx:id="tableColumnSentLastName" minWidth="0.0" prefWidth="329.5"
-                                                     text="Last Name"/>
-                                        <TableColumn fx:id="tableColumnSentFriendsFrom" minWidth="0.0" prefWidth="329.5"
-                                                     text="Friends From"/>
-                                        <TableColumn fx:id="tableColumnSentAccepted" minWidth="0.0" prefWidth="329.5"
-                                                     text="Accepted"/>
+                                        <TableColumn fx:id="tableColumnSentFirstName" prefWidth="331.5" text="First Name" />
+                                        <TableColumn fx:id="tableColumnSentLastName" minWidth="0.0" prefWidth="329.5" text="Last Name" />
+                                        <TableColumn fx:id="tableColumnSentFriendsFrom" minWidth="0.0" prefWidth="329.5" text="Friends From" />
+                                        <TableColumn fx:id="tableColumnSentAccepted" minWidth="0.0" prefWidth="329.5" text="Accepted" />
                                     </columns>
                                     <columnResizePolicy>
-                                        <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
+                                        <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                                     </columnResizePolicy>
                                 </TableView>
+                        <AnchorPane prefHeight="97.0" prefWidth="396.0">
+                           <children>
+                              <Button fx:id="buttonPreviousPageSent" layoutX="10.0" layoutY="2.0" mnemonicParsing="false" onAction="#handlePreviousPageSent" text="Previous" />
+                              <Label fx:id="labelPageSent" layoutX="164.0" layoutY="6.0" text="Page 0 of 0" />
+                              <Button fx:id="buttonNextPageSent" layoutX="346.0" layoutY="1.0" mnemonicParsing="false" onAction="#handleNextPageSent" text="Next" />
+                           </children>
+                        </AnchorPane>
                                 <HBox prefHeight="34.0" prefWidth="655.0" spacing="20.0">
                                     <children>
-                                        <Button mnemonicParsing="false" onAction="#handleAddPrietenie" text="Add"/>
-                                        <Button mnemonicParsing="false" onAction="#handleDeleteSentPrietenie"
-                                                text="Delete"/>
+                                        <Button mnemonicParsing="false" onAction="#handleAddPrietenie" text="Add" />
+                                        <Button mnemonicParsing="false" onAction="#handleDeleteSentPrietenie" text="Delete" />
                                     </children>
                                     <padding>
-                                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+                                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                                     </padding>
                                 </HBox>
                             </children>

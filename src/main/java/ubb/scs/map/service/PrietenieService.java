@@ -1,14 +1,18 @@
 package ubb.scs.map.service;
 
 import ubb.scs.map.domain.Prietenie;
-import ubb.scs.map.domain.PrietenieDto;
+import ubb.scs.map.dto.PrietenieDto;
 import ubb.scs.map.domain.Utilizator;
+import ubb.scs.map.dto.PrietenieFilterDto;
 import ubb.scs.map.exceptions.ServiceException;
 import ubb.scs.map.repository.Repository;
+import ubb.scs.map.repository.database.PrietenieRepository;
 import ubb.scs.map.utils.events.ChangeEventType;
 import ubb.scs.map.utils.events.PrietenieEntityChangeEvent;
 import ubb.scs.map.utils.observer.Observable;
 import ubb.scs.map.utils.observer.Observer;
+import ubb.scs.map.utils.paging.Page;
+import ubb.scs.map.utils.paging.Pageable;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -16,15 +20,15 @@ import java.util.*;
 public class PrietenieService implements Observable<PrietenieEntityChangeEvent> {
     private static PrietenieService instance = null;
     private final Repository<Long, Utilizator> repoUtilizator;
-    private final Repository<Long, Prietenie> repoPrietenie;
+    private final PrietenieRepository repoPrietenie;
     private final List<Observer<PrietenieEntityChangeEvent>> observers = new ArrayList<>();
 
-    private PrietenieService(Repository<Long, Utilizator> repoUtilizator, Repository<Long, Prietenie> repoPrietenie) {
+    private PrietenieService(Repository<Long, Utilizator> repoUtilizator, PrietenieRepository repoPrietenie) {
         this.repoUtilizator = repoUtilizator;
         this.repoPrietenie = repoPrietenie;
     }
 
-    public static PrietenieService getInstance(Repository<Long, Utilizator> repoUtilizator, Repository<Long, Prietenie> repoPrietenie) {
+    public static PrietenieService getInstance(Repository<Long, Utilizator> repoUtilizator, PrietenieRepository repoPrietenie) {
         if (instance == null) {
             instance = new PrietenieService(repoUtilizator, repoPrietenie);
         }
@@ -88,6 +92,22 @@ public class PrietenieService implements Observable<PrietenieEntityChangeEvent> 
         else
             utilizator = repoUtilizator.findOne(prietenie.getUtilizator2Id()).get();
         return new PrietenieDto(prietenie.getId(), utilizator.getFirstName(), utilizator.getLastName(), prietenie.getFriendsFrom(), prietenie.getAccepted());
+    }
+
+    public Page<PrietenieDto> findAllOnPage(Pageable pageable) {
+        Page<Prietenie> page = repoPrietenie.findAllOnPage(pageable);
+        List<PrietenieDto> prietenieDtos = page.getElementsOnPage().stream()
+                .map(prietenie -> createPrietenieDto(prietenie, true))
+                .toList();
+        return new Page<>(prietenieDtos, page.getTotalNumberOfElements());
+    }
+
+    public Page<PrietenieDto> findAllOnPage(Pageable pageable, PrietenieFilterDto filter) {
+        Page<Prietenie> page = repoPrietenie.findAllOnPage(pageable, filter);
+        List<PrietenieDto> prietenieDtos = page.getElementsOnPage().stream()
+                .map(prietenie -> createPrietenieDto(prietenie, filter.getReceived().get()))
+                .toList();
+        return new Page<>(prietenieDtos, page.getTotalNumberOfElements());
     }
 
     @Override

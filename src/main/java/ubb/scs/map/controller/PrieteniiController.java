@@ -6,24 +6,28 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import ubb.scs.map.SocialNetworkApplication;
-import ubb.scs.map.domain.PrietenieDto;
+import ubb.scs.map.domain.Prietenie;
+import ubb.scs.map.dto.PrietenieDto;
+import ubb.scs.map.dto.PrietenieFilterDto;
 import ubb.scs.map.exceptions.ServiceException;
 import ubb.scs.map.service.PrietenieService;
 import ubb.scs.map.service.UtilizatorService;
 import ubb.scs.map.utils.events.PrietenieEntityChangeEvent;
 import ubb.scs.map.utils.observer.Observer;
+import ubb.scs.map.utils.paging.Page;
+import ubb.scs.map.utils.paging.Pageable;
 
 import java.io.IOException;
+import java.nio.file.OpenOption;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.StreamSupport;
 
 public class PrieteniiController implements Observer<PrietenieEntityChangeEvent> {
@@ -44,6 +48,12 @@ public class PrieteniiController implements Observer<PrietenieEntityChangeEvent>
     @FXML
     private TableColumn<PrietenieDto, Boolean> tableColumnReceivedAccepted;
     @FXML
+    private Button buttonPreviousPageReceived;
+    @FXML
+    private Button buttonNextPageReceived;
+    @FXML
+    private Label labelPageReceived;
+    @FXML
     private TableView<PrietenieDto> tableViewSent;
     @FXML
     private TableColumn<PrietenieDto, String> tableColumnSentFirstName;
@@ -53,13 +63,27 @@ public class PrieteniiController implements Observer<PrietenieEntityChangeEvent>
     private TableColumn<PrietenieDto, LocalDateTime> tableColumnSentFriendsFrom;
     @FXML
     private TableColumn<PrietenieDto, Boolean> tableColumnSentAccepted;
+    @FXML
+    private Button buttonPreviousPageSent;
+    @FXML
+    private Button buttonNextPageSent;
+    @FXML
+    private Label labelPageSent;
 
+    private int pageSize = 2;
+    private int currentPageReceived = 0;
+    private int currentPageSent = 0;
+    private int totalNumberOfElementsReceived = 0;
+    private int totalNumberOfElementsSent = 0;
+
+    private PrietenieFilterDto filter = new PrietenieFilterDto();
 
     public void setService(UtilizatorService utilizatorService, PrietenieService prietenieService, Long userId) {
         this.utilizatorService = utilizatorService;
         this.prietenieService = prietenieService;
         this.userId = userId;
         prietenieService.addObserver(this);
+        filter.setUserId(Optional.of(userId));
         initModel();
 
         long pendingFriendships = modelReceived.stream()
@@ -85,15 +109,41 @@ public class PrieteniiController implements Observer<PrietenieEntityChangeEvent>
     }
 
     private void initModel() {
-        Iterable<PrietenieDto> prieteniiReceived = prietenieService.getAllReceivedPrietenii(userId);
-        List<PrietenieDto> friendshipsReceived = StreamSupport.stream(prieteniiReceived.spliterator(), false)
+        filter.setReceived(Optional.of(true));
+        Page<PrietenieDto> page = prietenieService.findAllOnPage(new Pageable(currentPageReceived, pageSize), filter);
+        int maxPage = (int) Math.ceil((double) page.getTotalNumberOfElements() / pageSize) - 1;
+        if (maxPage == -1) {
+            maxPage = 0;
+        }
+        if (currentPageReceived > maxPage) {
+            currentPageReceived = maxPage;
+            page = prietenieService.findAllOnPage(new Pageable(currentPageReceived, pageSize), filter);
+        }
+        totalNumberOfElementsReceived = page.getTotalNumberOfElements();
+        buttonPreviousPageReceived.setDisable(currentPageReceived == 0);
+        buttonNextPageReceived.setDisable(currentPageReceived == maxPage);
+        List<PrietenieDto> friendshipsReceived = StreamSupport.stream(page.getElementsOnPage().spliterator(), false)
                 .toList();
         modelReceived.setAll(friendshipsReceived);
+        labelPageReceived.setText("Page " + (currentPageReceived + 1) + " of " + (maxPage + 1));
 
-        Iterable<PrietenieDto> prieteniiSent = prietenieService.getAllSentPrietenii(userId);
-        List<PrietenieDto> friendshipsSent = StreamSupport.stream(prieteniiSent.spliterator(), false)
+        filter.setReceived(Optional.of(false));
+        page = prietenieService.findAllOnPage(new Pageable(currentPageSent, pageSize), filter);
+        maxPage = (int) Math.ceil((double) page.getTotalNumberOfElements() / pageSize) - 1;
+        if (maxPage == -1) {
+            maxPage = 0;
+        }
+        if (currentPageSent > maxPage) {
+            currentPageSent = maxPage;
+            page = prietenieService.findAllOnPage(new Pageable(currentPageSent, pageSize), filter);
+        }
+        totalNumberOfElementsSent = page.getTotalNumberOfElements();
+        buttonPreviousPageSent.setDisable(currentPageSent == 0);
+        buttonNextPageSent.setDisable(currentPageSent== maxPage);
+        List<PrietenieDto> friendshipsSent = StreamSupport.stream(page.getElementsOnPage().spliterator(), false)
                 .toList();
         modelSent.setAll(friendshipsSent);
+        labelPageSent.setText("Page " + (currentPageSent + 1) + " of " + (maxPage + 1));
     }
 
     @Override
@@ -166,5 +216,25 @@ public class PrieteniiController implements Observer<PrietenieEntityChangeEvent>
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void handlePreviousPageReceived(ActionEvent actionEvent) {
+        currentPageReceived--;
+        initModel();
+    }
+
+    public void handleNextPageReceived(ActionEvent actionEvent) {
+        currentPageReceived++;
+        initModel();
+    }
+
+    public void handlePreviousPageSent(ActionEvent actionEvent) {
+        currentPageSent--;
+        initModel();
+    }
+
+    public void handleNextPageSent(ActionEvent actionEvent) {
+        currentPageSent++;
+        initModel();
     }
 }
